@@ -3,6 +3,7 @@ import * as express from 'express';
 
 import {Block, generateNextBlock, getBlockchain} from './blockchain';
 import {connectToPeers, getSockets, initP2PServer} from './p2p';
+import { initWallet, getPublicFromWallet } from './security';
 
 const httpPort: number = parseInt(process.env.HTTP_PORT) || 3001;
 const p2pPort: number = parseInt(process.env.P2P_PORT) || 6001;
@@ -15,7 +16,7 @@ const initHttpServer = ( myHttpPort: number ) => {
         res.send(getBlockchain());
     });
     app.post('/mineBlock', (req, res) => {
-        const newBlock: Block = generateNextBlock(req.body.data);
+        const newBlock: Block = generateNextBlock(req.body.candidateAddress);
         res.send(newBlock);
     });
     app.get('/peers', (req, res) => {
@@ -25,6 +26,9 @@ const initHttpServer = ( myHttpPort: number ) => {
         connectToPeers(req.body.peer);
         res.send();
     });
+    app.get('/address', (req, res) => {
+        res.send({'address': getPublicFromWallet()})
+    })
 
     app.listen(myHttpPort, () => {
         console.log('Listening http on port: ' + myHttpPort);
@@ -33,3 +37,4 @@ const initHttpServer = ( myHttpPort: number ) => {
 
 initHttpServer(httpPort);
 initP2PServer(p2pPort);
+initWallet();
