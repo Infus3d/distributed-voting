@@ -117,7 +117,7 @@ const isValidNewBlock = (newBlock: Block, previousBlock: Block): boolean => {
     // check for duplicate, prevent double voting
     for(let i = 1; i < blockchain.length; i++) {
         // console.log('checking', blockchain[i].data);
-        if(_.isEqual(blockchain[i].data, newBlock.data)) {
+        if(_.isEqual(blockchain[i].data.voterAddress, newBlock.data.voterAddress)) {
             console.log('invalid vote: double voting')
             return false;
         }

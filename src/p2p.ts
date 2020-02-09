@@ -131,6 +131,11 @@ const broadcastLatest = (): void => {
 const connectToPeers = (newPeer: string): void => {
     const ws: WebSocket = new WebSocket(newPeer);
     ws.on('open', () => {
+        for(let i=0; i<sockets.length; i++)
+            if(sockets[i].url === newPeer){
+                console.log('Peer is already added!');
+                return;
+            }
         initConnection(ws);
     });
     ws.on('error', () => {
