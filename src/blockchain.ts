@@ -71,14 +71,22 @@ const addBlock = (newBlock: Block): boolean => {
 };
 
 const isValidBlockStructure = (block: Block): boolean => {
-    return typeof block.index === 'number'
-        && typeof block.hash === 'string'
-        && typeof block.previousHash === 'string'
-        && typeof block.timestamp === 'number'
-        && block.data != undefined
-        && typeof block.data.voterAddress === 'string'
-        && typeof block.data.candidateAddress === 'string'
-        && typeof block.data.signature === 'string';
+    if(typeof block.index !== 'number'
+    || typeof block.hash !== 'string'
+    || typeof block.previousHash !== 'string'
+    || typeof block.timestamp !== 'number') {
+        return false;
+    }
+
+    if(block.data != undefined && (
+        typeof block.data.voterAddress !== 'string'
+        || typeof block.data.candidateAddress !== 'string'
+        || typeof block.data.signature !== 'string'
+    )) {
+        return false;
+    }
+    
+    return true;
 };
 
 const isValidNewBlock = (newBlock: Block, previousBlock: Block): boolean => {
