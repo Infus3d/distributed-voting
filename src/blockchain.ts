@@ -52,6 +52,7 @@ const generateNextBlock = (candidateAddress: string) => {
     const nextHash: string = calculateHash(nextIndex, previousBlock.hash, nextTimestamp, blockData);
     const newBlock: Block = new Block(nextIndex, nextHash, previousBlock.hash, nextTimestamp, blockData);
     if(addBlock(newBlock)) {
+        console.log("added new block", newBlock);
         broadcastLatest();
         return newBlock;
     }

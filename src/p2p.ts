@@ -48,7 +48,7 @@ const initMessageHandler = (ws: WebSocket) => {
             console.log('could not parse received JSON message: ' + data);
             return;
         }
-        console.log('Received message' + JSON.stringify(message));
+        console.log('Received message', message);
         switch (message.type) {
             case MessageType.QUERY_LATEST:
                 write(ws, responseLatestMsg());
@@ -128,18 +128,30 @@ const broadcastLatest = (): void => {
     broadcast(responseLatestMsg());
 };
 
-const connectToPeers = (newPeer: string): void => {
+const connectToPeers = (newPeer: string, res): void => {
     const ws: WebSocket = new WebSocket(newPeer);
     ws.on('open', () => {
         for(let i=0; i<sockets.length; i++)
             if(sockets[i].url === newPeer){
-                console.log('Peer is already added!');
+                console.log('Peer is already added!', newPeer);
+                res.send({
+                    "status": "error",
+                    "message": "peer is already added"
+                });
                 return;
             }
         initConnection(ws);
+        console.log("New peer added: ", newPeer);
+        res.send({
+            "status": "ok"
+        });
     });
     ws.on('error', () => {
-        console.log('connection failed');
+        res.send({
+            "status": "error",
+            "message": "peer is down"
+        });
+        console.log('connection failed', newPeer);
     });
 };
 

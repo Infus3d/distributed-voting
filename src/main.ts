@@ -17,18 +17,27 @@ const initHttpServer = ( myHttpPort: number ) => {
     });
     app.post('/mineBlock', (req, res) => {
         const newBlock: Block = generateNextBlock(req.body.candidateAddress);
-        res.send(newBlock);
+        if(newBlock.index < 0) {
+            res.send({
+                "status": "error"
+            });
+        } else {
+            res.send({
+                "status": "ok",
+                "newBlock": newBlock
+            });
+        }
+        
     });
     app.get('/peers', (req, res) => {
         res.send(getSockets().map(( s: any ) => s._socket.remoteAddress + ':' + s._socket.remotePort));
     });
     app.post('/addPeer', (req, res) => {
-        connectToPeers(req.body.peer);
-        res.send();
+        connectToPeers(req.body.peer, res);
     });
     app.get('/address', (req, res) => {
-        res.send({'address': getPublicFromWallet()})
-    })
+        res.send({'address': getPublicFromWallet()});
+    });
 
     app.listen(myHttpPort, () => {
         console.log('Listening http on port: ' + myHttpPort);
